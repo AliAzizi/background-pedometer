@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 @immutable
-class BGPedometerSettings {}
+class BGPedometerSettings {
+  BGPedometerSettings({required this.androidSettings});
+
+  final BGPedometerAndroidSettings androidSettings;
+}
 
 @immutable
 class BGPedometerAndroidSettings {
@@ -43,5 +47,29 @@ class BGPedometerNotificationSettings {
 
 enum BGPedometerAndroidSensorType { stepCounter }
 
+extension BGPedometerAndroidSettingsMapper on BGPedometerAndroidSettings {
+  Map<String, dynamic> toMap() {
+    return {
+      'autoRestart': autoRestart,
+      'autoRunOnBoot': autoRunOnBoot,
+      'autoRunOnMyPackageReplaced': autoRunOnMyPackageReplaced,
+      'shutdownAware': shutdownAware,
+      'sensorFallbackOrder': sensorFallbackOrder.map((e) => e.index).toList(),
+      'notification': notification?.toMap(),
+    };
+  }
+}
 
-class BGPedometerIOSSettings {}
+extension BGPedometerNotificationSettingsMapper
+    on BGPedometerNotificationSettings {
+  Map<String, dynamic> toMap() {
+    return {
+      'channelId': channelId,
+      'channelName': channelName,
+      'icon': icon,
+      'messageTemplate': messageTemplate,
+      'notificationID': notificationID,
+      'channelDescription': channelDescription,
+    };
+  }
+}
