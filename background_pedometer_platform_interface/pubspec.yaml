@@ -1,0 +1,23 @@
+name: background_pedometer_platform_interface
+description: "A new Flutter package project."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.7  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - background-pedometer
+  - pedometer
+  - step-counter
+  - step-detector
