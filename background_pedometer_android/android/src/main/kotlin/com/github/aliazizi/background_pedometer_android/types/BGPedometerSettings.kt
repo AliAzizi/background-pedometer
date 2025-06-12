@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
 import android.os.Parcelable
+import com.github.aliazizi.background_pedometer_android.exceptions.MissingNotificationDrawableException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -18,6 +19,7 @@ data class BGPedometerSettings(
 ) : Parcelable {
 
     companion object {
+        @JvmStatic
         fun fromMap(map: Map<String, Any?>): BGPedometerSettings {
             val sensorFallbackOrder = (map["sensorFallbackOrder"] as List<*>).mapNotNull {
                 BGPedometerSensorType byName it as String
@@ -51,21 +53,18 @@ data class BGPedometerNotificationSettings(
     @IgnoredOnParcel
     private var _resolvedIconResId: Int? = null
 
-    @SuppressLint("DiscouragedApi")
     fun resolveIconResId(context: Context): Int {
         return _resolvedIconResId ?: run {
-            val resId = if (icon.isNotBlank()) {
-                context.resources.getIdentifier(icon, "drawable", context.packageName)
-                    .takeIf { it != 0 }
-            } else null
+            val resId = context.resources.getIdentifier(icon, "drawable", context.packageName)
+                .takeIf { it != 0 } ?: throw MissingNotificationDrawableException(icon)
 
-            val finalResId = resId ?: android.R.drawable.ic_notification_overlay
-            _resolvedIconResId = finalResId
-            finalResId
+            _resolvedIconResId = resId
+            resId
         }
     }
 
     companion object {
+        @JvmStatic
         infix fun fromMap(map: Map<*, *>): BGPedometerNotificationSettings {
             return BGPedometerNotificationSettings(
                 channelId = map["channelId"] as String,
