@@ -11,12 +11,12 @@ class BGPedometerData {
   factory BGPedometerData.fromMap(Map<String, dynamic> map) {
     return BGPedometerData(
       numberOfSteps: map['numberOfSteps'],
-      start: DateTime.fromMillisecondsSinceEpoch(map['start'], isUtc: true),
-      end: DateTime.fromMillisecondsSinceEpoch(map['end'], isUtc: true),
+      start: DateTime.fromMillisecondsSinceEpoch(map['start'], isUtc: false),
+      end: DateTime.fromMillisecondsSinceEpoch(map['end'], isUtc: false),
     );
   }
 
-  final DateTime end;
   final int numberOfSteps;
   final DateTime start;
+  final DateTime end;
 }
