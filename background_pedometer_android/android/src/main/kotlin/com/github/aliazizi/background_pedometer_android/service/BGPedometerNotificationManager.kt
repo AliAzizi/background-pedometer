@@ -31,7 +31,7 @@ class BackgroundPedometerNotificationManager(
 
     @SuppressLint("MissingPermission")
     fun updateSteps(steps: Int) {
-        kotlin.runCatching {
+        runCatching {
             notificationManager.notify(
                 settings.notificationID,
                 notificationBuilder.setContentText(settings.formatMessage(steps)).build()
