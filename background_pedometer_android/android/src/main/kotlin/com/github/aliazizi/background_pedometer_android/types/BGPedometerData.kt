@@ -1,8 +1,6 @@
 package com.github.aliazizi.background_pedometer_android.types
 
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
 
 class BGPedometerData private constructor(
     private val numberOfSteps: UInt, private val startUtc: Instant, private val endUtc: Instant
