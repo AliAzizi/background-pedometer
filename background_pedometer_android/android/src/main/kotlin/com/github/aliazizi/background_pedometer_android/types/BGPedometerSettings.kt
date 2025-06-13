@@ -3,9 +3,7 @@ package com.github.aliazizi.background_pedometer_android.types
 import android.content.Context
 import android.content.SharedPreferences
 import android.hardware.Sensor
-import android.os.Parcel
 import android.os.Parcelable
-import android.util.Base64
 import com.github.aliazizi.background_pedometer_android.exceptions.MissingNotificationDrawableException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -19,7 +17,7 @@ data class BGPedometerSettings(
     val autoRunOnMyPackageReplaced: Boolean,
     val shutdownAware: Boolean,
     val sensorFallbackOrder: List<BGPedometerSensorType>,
-    val notification: BGPedometerNotificationSettings?
+    val notification: BGPedometerNotificationSettings
 ) : Parcelable {
 
     companion object {
@@ -30,7 +28,7 @@ data class BGPedometerSettings(
             }
 
             val notification =
-                (map["notification"] as? Map<*, *>)?.let(BGPedometerNotificationSettings::fromMap)
+                (map["notification"] as Map<*, *>).let(BGPedometerNotificationSettings::fromMap)
 
             return BGPedometerSettings(
                 autoRestart = map["autoRestart"] as Boolean,
@@ -68,6 +66,9 @@ data class BGPedometerNotificationSettings(
             resId
         }
     }
+
+    fun formatMessage(steps: Int): String =
+        messageTemplate.replace("{}", steps.toString(), ignoreCase = false)
 
     companion object {
         @JvmStatic
@@ -109,24 +110,23 @@ class BGPedometerSettingsDelegate(
         val sensorFallbackOrder = prefs.getString("sensorFallbackOrder", "")?.split(",")
             ?.mapNotNull { BGPedometerSensorType.byName(it) } ?: return null
 
-        val hasNotification = prefs.getBoolean("notif_enabled", false)
-        val notification = if (hasNotification) {
-            val channelId = prefs.getString("notif_channelId", null) ?: return null
-            val channelName = prefs.getString("notif_channelName", null) ?: return null
-            val icon = prefs.getString("notif_icon", null) ?: return null
-            val messageTemplate = prefs.getString("notif_messageTemplate", null) ?: return null
-            val notificationID = prefs.getInt("notif_notificationID", -1)
-            if (notificationID == -1) return null
 
-            BGPedometerNotificationSettings(
-                channelId = channelId,
-                channelName = channelName,
-                icon = icon,
-                messageTemplate = messageTemplate,
-                notificationID = notificationID,
-                channelDescription = prefs.getString("notif_channelDescription", null)
-            )
-        } else null
+        val channelId = prefs.getString("notif_channelId", null) ?: return null
+        val channelName = prefs.getString("notif_channelName", null) ?: return null
+        val icon = prefs.getString("notif_icon", null) ?: return null
+        val messageTemplate = prefs.getString("notif_messageTemplate", null) ?: return null
+        val notificationID = prefs.getInt("notif_notificationID", -1)
+        if (notificationID == -1) return null
+
+        val notification = BGPedometerNotificationSettings(
+            channelId = channelId,
+            channelName = channelName,
+            icon = icon,
+            messageTemplate = messageTemplate,
+            notificationID = notificationID,
+            channelDescription = prefs.getString("notif_channelDescription", null)
+        )
+
 
         return BGPedometerSettings(
             autoRestart = prefs.getBoolean("autoRestart", false),
